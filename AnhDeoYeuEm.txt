@@ -1,0 +1,85 @@
+
+local ScreenGui = Instance.new("ScreenGui")
+local OpenButton = Instance.new("ImageButton")
+local MainFrame = Instance.new("Frame")
+local AutoFarmButton = Instance.new("TextButton")
+local UICorner1 = Instance.new("UICorner")
+local UICorner2 = Instance.new("UICorner")
+local UICorner3 = Instance.new("UICorner")
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+
+OpenButton.Parent = ScreenGui
+OpenButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+OpenButton.Size = UDim2.new(450, 300)
+OpenButton.Position = UDim2.new(0.05, 0, 0.4, 0)
+OpenButton.Image = "rbxassetid://85927475108236"
+OpenButton.Draggable = true
+OpenButton.Active = true
+
+UICorner1.Parent = OpenButton
+UICorner1.CornerRadius = UDim.new(1, 0)
+
+
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Position = UDim2.new(0.35, 0, 0.3, 0)
+MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UICorner2.Parent = MainFrame
+UICorner2.CornerRadius = UDim.new(0, 15)
+
+
+AutoFarmButton.Parent = MainFrame
+AutoFarmButton.Size = UDim2.new(0, 200, 0, 50)
+AutoFarmButton.Position = UDim2.new(0.17, 0, 0.3, 0)
+AutoFarmButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+AutoFarmButton.Text = "Auto Farm : OFF"
+AutoFarmButton.TextColor3 = Color3.fromRGB(255,255,255)
+AutoFarmButton.TextSize = 18
+
+UICorner3.Parent = AutoFarmButton
+UICorner3.CornerRadius = UDim.new(0, 12)
+
+
+OpenButton.MouseButton1Click:Connect(function()
+	MainFrame.Visible = not MainFrame.Visible
+end)
+
+
+local AutoFarm = false
+
+AutoFarmButton.MouseButton1Click:Connect(function()
+	AutoFarm = not AutoFarm
+	
+	if AutoFarm then
+		AutoFarmButton.Text = "Auto Farm : ON"
+	else
+		AutoFarmButton.Text = "Auto Farm : OFF"
+	end
+end)
+
+
+spawn(function()
+	while task.wait(0.2) do
+		if AutoFarm then
+			pcall(function()
+				local player = game.Players.LocalPlayer
+				local char = player.Character
+				local hrp = char:WaitForChild("HumanoidRootPart")
+				
+				for _,v in pairs(workspace.Enemies:GetChildren()) do
+					if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+						hrp.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,0,3)
+						break
+					end
+				end
+			end)
+		end
+	end
+end)
